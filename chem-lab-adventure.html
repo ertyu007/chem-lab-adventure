@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChemLab Adventure</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Noto Sans Thai", sans-serif;
+      background-color: var(--bg);
+      background-image: radial-gradient(1200px 800px at 80% -10%, rgba(31, 41, 55, 0.8) 0%, rgba(15, 23, 42, 0.9) 60%), url("data:image/svg+xml,%3Csvg width='60' height='103.92' viewBox='0 0 60 103.92' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 17.32v34.64L30 69.28 0 51.96V17.32L30 0z' fill-opacity='0.03' fill='%23ffffff' fill-rule='evenodd'/%3E%3C/svg%3E");
+      color: var(--text);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(15, 23, 42, .85);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 16px
+    }
+
+    h1 {
+      margin: 8px 0;
+      color: var(--accent2);
+      letter-spacing: .5px
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .spacer {
+      flex: 1
+    }
+
+    .badge {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    button {
+      background: var(--accent);
+      border: none;
+      color: #052e16;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #15803d;
+      transition: .05s transform;
+    }
+
+    button.secondary {
+      background: #1f2937;
+      color: var(--text);
+      box-shadow: 0 4px 0 #0b1220
+    }
+
+    button.warn {
+      background: var(--warn);
+      box-shadow: 0 4px 0 #b45309;
+      color: #1f1300
+    }
+
+    button.bad {
+      background: var(--bad);
+      box-shadow: 0 4px 0 #7f1d1d;
+      color: #fff
+    }
+
+    button:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #000
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px
+    }
+
+    .card {
+      background: linear-gradient(180deg, #1f2937, #111827);
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: space-between;
+    }
+
+    .card.locked {
+      opacity: .5
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 16px
+    }
+
+    .boss-card {
+      border: 1px solid var(--bad);
+      background: linear-gradient(180deg, #3f1d1d, #111827);
+    }
+
+    .boss-text {
+      color: var(--bad);
+      font-weight: bold;
+    }
+
+    .stars {
+      letter-spacing: 2px
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .title {
+      font-size: 20px;
+      margin: 0 0 6px 0
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0 0 12px 0
+    }
+
+    .hr {
+      height: 1px;
+      background: #1f2937;
+      margin: 12px 0
+    }
+
+    .big {
+      font-size: 22px;
+      font-weight: 800
+    }
+
+    .center {
+      text-align: center
+    }
+
+    .pill {
+      display: inline-block;
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin: 4px
+    }
+
+    .kbd {
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      border-bottom-width: 3px;
+      padding: 2px 6px;
+      border-radius: 6px
+    }
+
+    .progress {
+      height: 10px;
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      border-radius: 999px;
+      overflow: hidden
+    }
+
+    .progress>div {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2))
+    }
+
+    .list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .tile {
+      min-width: 60px;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      cursor: pointer
+    }
+
+    .tile:hover {
+      border-color: #374151
+    }
+
+    .slot {
+      min-width: 70px;
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      background: #020617;
+      border: 2px dashed #334155;
+      color: #94a3b8
+    }
+
+    .result {
+      margin-top: 10px;
+      font-weight: 700
+    }
+
+    .good {
+      color: #22c55e
+    }
+
+    .bad {
+      color: #ef4444
+    }
+
+    .warn {
+      color: #f59e0b
+    }
+
+    footer {
+      color: #6b7280;
+      font-size: 12px;
+      text-align: center;
+      padding: 20px
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.9);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* MATCHING GAME CSS */
+    .match-container {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      gap: 40px;
+    }
+
+    .match-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 45%;
+    }
+
+    .match-item {
+      background: #1f2937;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid #374151;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .match-item.selected {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.2);
+    }
+
+    .match-item.matched {
+      border-color: var(--good);
+      background: rgba(34, 197, 94, 0.2);
+      pointer-events: none;
+    }
+
+    /* MEMORY GAME CSS */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .memory-card {
+      aspect-ratio: 1;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .memory-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .memory-card.flipped .memory-inner {
+      transform: rotateY(180deg);
+    }
+
+    .memory-front,
+    .memory-back {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .memory-front {
+      background: #374151;
+      border: 2px solid #4b5563;
+    }
+
+    .memory-front::after {
+      content: "?";
+      color: #9ca3af;
+      font-size: 32px;
+    }
+
+    .memory-back {
+      background: var(--accent);
+      color: #fff;
+      transform: rotateY(180deg);
+      border: 2px solid #0ea5e9;
+    }
+
+    .memory-card.matched .memory-inner {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* REACTION & SANDBOX CSS */
+    .slot-zone {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .slot {
+      width: 60px;
+      height: 60px;
+      border: 2px dashed #4b5563;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.2)
+    }
+
+    .slot.filled {
+      border: 2px solid var(--accent);
+      background: rgba(56, 189, 248, 0.2);
+    }
+
+    .slot-symbol {
+      font-size: 20px;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    .inventory {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      background: #111827;
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .inv-item {
+      padding: 8px 16px;
+      background: #374151;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    .inv-item:hover {
+      background: #4b5563;
+    }
+
+    /* Pressure Timer Bar */
+    .timer-wrap {
+      width: 100%;
+      height: 12px;
+      background: #1f2937;
+      border-radius: 6px;
+      margin-top: 10px;
+      overflow: hidden;
+      border: 1px solid #374151;
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--warn), var(--bad));
+      transition: width 0.1s linear, background-color 0.3s ease;
+    }
+
+    /* AI Tutor Box */
+    .ai-tutor {
+      background: rgba(14, 165, 233, 0.1);
+      border: 1px solid var(--accent2);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      color: var(--accent2);
+    }
+
+    /* AR Video Background */
+    #ar-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+
+    .ar-active #ar-video {
+      opacity: 0.6;
+    }
+
+    .ar-active body {
+      background: transparent !important;
+    }
+
+    /* VR Mode Background Panning */
+    .vr-active body {
+      background-size: 200% !important;
+      transition: background-position 0.1s ease-out;
+    }
+
+    .modal-content {
+      background: var(--panel);
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .ach-card {
+      background: #1f2937;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ach-card.locked {
+      opacity: 0.5;
+      filter: grayscale(1);
+    }
+
+    .ach-icon {
+      font-size: 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .popup-content {
+      min-width: 320px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      padding: 24px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes popUp {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Beaker & Reactions */
+    .beaker {
+      width: 60px;
+      height: 80px;
+      margin: 10px auto;
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .beaker::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -6px;
+      right: -6px;
+      height: 6px;
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+    }
+
+    .liquid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20%;
+      background: var(--accent2);
+      border-radius: 0 0 9px 9px;
+      transition: height 0.4s ease, background-color 0.4s ease;
+    }
+
+    .reaction-bubble {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp 1.5s ease-in forwards;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .victory-bubble {
+      position: fixed;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      animation: floatUpScreen var(--dur) ease-in forwards;
+    }
+
+    @keyframes floatUpScreen {
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-10vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* 3D Molecule System */
+    .model-3d-wrap {
+      width: 50px;
+      height: 50px;
+      perspective: 800px;
+    }
+
+    .molecule-3d {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotate3d 6s infinite linear;
+    }
+
+    .atom-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+      background: radial-gradient(circle at 4px 4px, var(--accent2), #0284c7);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent2);
+    }
+
+    .ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px dashed rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      transform-style: preserve-3d;
+    }
+
+    .ring2 {
+      transform: rotateX(60deg) rotateY(45deg);
+    }
+
+    .ring3 {
+      transform: rotateX(-60deg) rotateY(45deg);
+    }
+
+    .electron {
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      margin-left: -3px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    @keyframes rotate3d {
+      0% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+      }
+
+      100% {
+        transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <video id="ar-video" autoplay playsinline></video>
+  <header>
+    <div class="container row">
+      <div class="model-3d-wrap" style="width: 36px; height: 36px; margin-right: 8px;">
+        <div class="molecule-3d">
+          <div class="atom-core" style="width:12px; height:12px; margin:-6px 0 0 -6px;"></div>
+          <div class="ring" style="border-width:2px;">
+            <div class="electron" style="width:4px; height:4px; margin-left:-2px; top:-2px;"></div>
+          </div>
+          <div class="ring ring2" style="border-width:2px;">
+            <div class="electron" style="width:4px; height:4px; margin-left:-2px; top:-2px;"></div>
+          </div>
+          <div class="ring ring3" style="border-width:2px;">
+            <div class="electron" style="width:4px; height:4px; margin-left:-2px; top:-2px;"></div>
+          </div>
+        </div>
+      </div>
+      <h1 style="margin: 0;">ChemLab Adventure</h1>
+      <div class="spacer"></div>
+      <div class="badge">Lv <span id="uiLevel">1</span></div>
+      <div class="badge">XP <span id="uiXP">0</span>/<span id="uiXPNext">100</span></div>
+      <div class="badge">⭐ <span id="uiStars">0</span></div>
+      <div class="badge good">🔥 Combo MAX: <span id="uiMaxCombo">0</span></div>
+      <button class="secondary" id="btnMenu">เมนู</button>
+      <button class="secondary" id="btnReset">รีเซ็ต</button>
+      <button class="secondary" id="btnVR" style="margin-left:8px;">🥽 VR View</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- MENU -->
+    <section id="screenMenu" class="panel">
+      <div class="row">
+        <div>
+          <div class="title">เลือกด่าน</div>
+          <div class="subtitle">ทำภารกิจให้ผ่านเพื่อปลดล็อกด่านถัดไป</div>
+        </div>
+        <div class="spacer"></div>
+        <button id="btnBadges" class="secondary">🏆 ภารกิจ & เหรียญตรา</button>
+        <button id="btnAiSummary" class="secondary" style="margin-left:6px;">📚 AI สรุปบทเรียน</button>
+        <button id="btnSandbox" class="accent" style="margin-left:6px;">🧪 โหมดทดลองอิสระ (Sandbox)</button>
+        <div class="spacer"></div>
+        <div style="min-width:220px">
+          <div class="small">ความคืบหน้าเลเวล</div>
+          <div class="progress">
+            <div id="xpBar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div id="levelGrid" class="grid"></div>
+    </section>
+
+    <!-- GAME -->
+    <section id="screenGame" class="panel hidden">
+      <div class="row" style="align-items: flex-start;">
+        <div>
+          <div class="title" id="gTitle"></div>
+          <div class="subtitle" id="gDesc"></div>
+        </div>
+        <div class="spacer"></div>
+        <!-- 3D Molecule Graphic -->
+        <div class="model-3d-wrap" style="align-self:center;">
+          <div class="molecule-3d">
+            <div class="atom-core"></div>
+            <div class="ring">
+              <div class="electron"></div>
+            </div>
+            <div class="ring ring2">
+              <div class="electron"></div>
+            </div>
+            <div class="ring ring3">
+              <div class="electron"></div>
+            </div>
+          </div>
+        </div>
+        <div class="spacer"></div>
+        <div style="text-align: right;">
+          <div class="badge" style="margin-bottom: 6px;">ดาวด่านนี้: <span id="gStars">0</span>/3</div>
+          <br>
+          <div class="badge">คะแนน: <span id="gScore">0</span></div>
+          <br>
+          <button class="secondary small" id="btnAR" style="margin-top:6px; padding:4px 8px;">📸 AR Mode</button>
+          <div class="badge good" style="margin-top: 6px;">🔥 Combo: <span id="gCombo">0</span></div>
+        </div>
+      </div>
+      <div class="timer-wrap">
+        <div id="gTimerBar" class="timer-bar" style="width:100%"></div>
+      </div>
+      <div style="text-align:center; font-size:12px; margin-top:4px; color:var(--warn)">เวลาที่เหลือ: <span
+          id="gTimeLeft">0</span>s</div>
+      <div class="hr"></div>
+      <div id="gBody"></div>
+      <div id="aiTutor" class="ai-tutor hidden">
+        <div>🤖</div>
+        <div id="aiTutorMsg" style="flex:1">กำลังวิเคราะห์...</div>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <button id="gCheck">ตรวจคำตอบ</button>
+        <button class="secondary" id="gReset">เริ่มใหม่</button>
+        <div class="spacer"></div>
+        <button class="secondary" id="gBack">กลับเมนู</button>
+      </div>
+      <div id="gResult" class="result"></div>
+    </section>
+
+    <!-- POPUP -->
+    <div id="winPopup" class="popup-overlay hidden">
+      <div class="popup-content panel">
+        <div class="title good" style="font-size: 28px; margin-bottom: 12px;">🎉 ยินดีด้วย!</div>
+        <div class="subtitle" id="popupMsg" style="font-size: 16px; line-height: 1.5; color: var(--text);"></div>
+        <div class="hr" style="margin: 20px 0;"></div>
+        <div class="row" style="justify-content: center; gap: 12px; margin-bottom:12px;">
+          <button id="btnAiExplain" class="secondary"
+            style="width:100%; border:1px solid var(--accent2); color:var(--accent2)">💡 AI อธิบายคำตอบ</button>
+        </div>
+        <div id="aiExplainBox" class="ai-tutor hidden" style="text-align:left; margin-bottom:16px;"></div>
+        <div class="row" style="justify-content: center; gap: 12px;">
+          <button id="btnNextLevel" class="accent">AI แนะนำ: ด่านถัดไป ➔</button>
+          <button id="btnPopupMenu" class="secondary">กลับเมนู</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES MODAL -->
+    <div id="modalBadges" class="modal hidden">
+      <div class="modal-content">
+        <div class="row">
+          <div class="title">🏆 ภารกิจ & เหรียญตรา</div>
+          <div class="spacer"></div>
+          <button id="btnCloseBadges" class="bad">ปิด</button>
+        </div>
+        <div class="hr"></div>
+        <div class="subtitle">ภารกิจประจำวัน (Daily Missions)</div>
+        <div id="missionsList"></div>
+        <div class="hr"></div>
+        <div class="subtitle">เหรียญตราความสำเร็จ (Achievements)</div>
+        <div id="achievementsList"></div>
+      </div>
+    </div>
+
+    <!-- AI SUMMARY MODAL -->
+    <div id="modalAiSummary" class="modal hidden">
+      <div class="modal-content">
+        <div class="row">
+          <div class="title" style="color:var(--accent2)">📚 AI สรุปบทเรียนของคุณ</div>
+          <div class="spacer"></div>
+          <button id="btnCloseAiSummary" class="bad">ปิด</button>
+        </div>
+        <div class="hr"></div>
+        <div id="aiSummaryBody" style="line-height:1.6">กำลังประมวลผลข้อมูลการเล่นของคุณ...</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>เล่นได้ทันทีในเบราว์เซอร์ • บันทึกความคืบหน้าในเครื่อง (localStorage)</footer>
+
+  <script>
+    /* ================== SOUND SYSTEM ================== */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(500, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+      } else if (type === 'success') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.setValueAtTime(600, now + 0.1);
+        osc.frequency.setValueAtTime(800, now + 0.2);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(250, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.2);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.start(now); osc.stop(now + 0.2);
+      } else if (type === 'levelup') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.setValueAtTime(500, now + 0.1);
+        osc.frequency.setValueAtTime(700, now + 0.2);
+        osc.frequency.setValueAtTime(900, now + 0.3);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now); osc.stop(now + 0.4);
+      }
+    }
+
+    // Attach click sound to buttons globally
+    document.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON' || e.target.classList.contains('tile')) {
+        playSound('click');
+      }
+    });
+
+    /* ================== STATE & SAVE ================== */
+    const SAVE_KEY = "CHEMLAB_SAVE_V2";
+    const state = {
+      xp: 0, level: 1, stars: 0,
+      levelsUnlocked: 1,
+      levelStars: {}, // id -> 0..3
+      combo: 0,
+      maxCombo: 0,
+      lastLoginDate: "",
+      achievements: [], // string IDs
+      missions: [], // current active missions
+      stats: { levelsPlayed: 0 } // tracking for missions
+    };
+
+    function xpNext() { return 100 + (state.level - 1) * 40; }
+    function save() { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+    function load() {
+      const s = localStorage.getItem(SAVE_KEY);
+      if (s) { try { Object.assign(state, JSON.parse(s)); if (!state.stats) state.stats = { levelsPlayed: 0 }; } catch { } }
+    }
+    function resetAll() {
+      localStorage.removeItem(SAVE_KEY);
+      location.reload();
+    }
+
+    /* ================== ACHIEVEMENTS & MISSIONS DATA ================== */
+    const A_DATA = [
+      { id: "first_blood", icon: "🩸", title: "ก้าวแรก", desc: "ผ่านด่าน 1" },
+      { id: "combo_5", icon: "🔥", title: "On Fire!", desc: "ทำ Combo ถึง 5" },
+      { id: "speed_demon", icon: "⚡", title: "Speed Demon", desc: "ผ่านด่านในเวลาต่ำกว่า 3 วินาที" },
+      { id: "boss_killer", icon: "💀", title: "Boss Killer", desc: "ล้มบอสตัวแรก (ด่าน 10)" },
+      { id: "chemist_expert", icon: "🏆", title: "Chemist Expert", desc: "เล่นด่านครบ 50 ด่าน" },
+      { id: "lucky_guess", icon: "🎲", title: "สายมั่วชัวร์ป้าบ", desc: "ตอบถูกภายใน 1 วินาทีแรก (เดาเก่ง!)" },
+      { id: "chill_guy", icon: "🐢", title: "ใจเย็นไปไหน", desc: "ตอบถูกในเสี้ยววินาทีสุดท้ายก่อนหมดเวลา" },
+      { id: "overdose", icon: "💥", title: "เทกระจาด", desc: "บีบหลอดหยดสารปริมาณมหาศาล (เกิน 15 หยด)" },
+      { id: "wrong_fast", icon: "🤡", title: "นิ้วเบียด", desc: "กดส่งคำตอบผิดภายใน 1 วินาที (รีบไปไหน!)" },
+      { id: "blind_guess", icon: "🙈", title: "หลับตาเล่น", desc: "กดตอบผิด 5 ครั้งรวดในด่านเดียว" },
+    ];
+
+    function checkAchievements(lvlId, time, correct) {
+      if (!correct) {
+        if (time <= 1 && !state.achievements.includes("wrong_fast")) state.achievements.push("wrong_fast");
+        if (local.wrongCount >= 5 && !state.achievements.includes("blind_guess")) state.achievements.push("blind_guess");
+        save();
+        return;
+      }
+      if (lvlId === 1 && !state.achievements.includes("first_blood")) state.achievements.push("first_blood");
+      if (state.combo >= 5 && !state.achievements.includes("combo_5")) state.achievements.push("combo_5");
+      if (time <= 3 && !state.achievements.includes("speed_demon")) state.achievements.push("speed_demon");
+      if (time <= 1 && !state.achievements.includes("lucky_guess")) state.achievements.push("lucky_guess");
+
+      // maxTimeForLevel might be undefined globally here, use fallback
+      let maxTime = typeof maxTimeForLevel !== 'undefined' ? maxTimeForLevel : 30;
+      if (time >= maxTime - 1 && time > 2 && !state.achievements.includes("chill_guy")) state.achievements.push("chill_guy");
+
+      if (lvlId === 10 && !state.achievements.includes("boss_killer")) state.achievements.push("boss_killer");
+      if (state.levelsUnlocked >= 50 && !state.achievements.includes("chemist_expert")) state.achievements.push("chemist_expert");
+
+      if (local.acid !== undefined && local.base !== undefined) {
+        if ((local.acid >= 15 || local.base >= 15) && !state.achievements.includes("overdose")) state.achievements.push("overdose");
+      }
+      save();
+    }
+
+    /* ================== LEVEL DATA GENERATOR ================== */
+    const baseLevels = [
+      { id: 1, type: "atom", title: "อะตอม: Hydrogen", desc: "ตั้งค่า Proton ให้ถูกต้อง (Hydrogen มี Proton = 1)", target: 1 },
+      { id: 2, type: "atom", title: "อะตอม: Carbon", desc: "Carbon มี Proton = 6", target: 6 },
+      { id: 3, type: "atom", title: "อะตอม: Oxygen", desc: "Oxygen มี Proton = 8", target: 8 },
+      { id: 4, type: "molecule", title: "โมเลกุล: น้ำ", desc: "สร้าง H₂O", target: { H: 2, O: 1 } },
+      { id: 5, type: "mix", title: "กรด-เบส", desc: "ทำให้เป็นกลาง (Acid = Base)", target: "neutral" },
+      { id: 6, type: "separate", title: "แยกทรายกับน้ำ", desc: "เลือกวิธีแยกที่ถูกต้อง", answer: "filtration" },
+      { id: 7, type: "identify", title: "ตรวจสาร", desc: "Litmus แดง, pH=3 → เป็นอะไร?", answer: "acid" },
+      { id: 8, type: "periodic", title: "ตารางธาตุ", desc: "เลือกธาตุที่มีเลขอะตอม = 8", answer: "O" },
+      { id: 9, type: "molecule", title: "โมเลกุล: CO₂", desc: "สร้าง CO₂", target: { C: 1, O: 2 } },
+      { id: 10, type: "boss", title: "BOSS 1: The Acid Bomb", desc: "ทำสารให้เป็นกลางอย่างรวดเร็ว!", target: "neutral", timeLimit: 15 },
+      { id: 11, type: "reaction", title: "สร้างเกลือแกง", desc: "ต่อสมการให้ถูกต้อง: ? + ? ➔ NaCl", slots: ["?", "+", "?", "➔", "NaCl"], pool: ["Na", "H", "O", "Cl", "K"], answer: ["Na", "Cl"] },
+    ];
+
+    const types = ["atom", "molecule", "mix", "separate", "identify", "periodic", "match", "memory", "reaction"];
+    const elements = [
+      { name: "Helium", p: 2, sym: "He" }, { name: "Nitrogen", p: 7, sym: "N" },
+      { name: "Sodium", p: 11, sym: "Na" }, { name: "Chlorine", p: 17, sym: "Cl" }
+    ];
+    const mols = [
+      { title: "มีเทน", target: { C: 1, H: 4 } }, { title: "แอมโมเนีย", target: { N: 1, H: 3 } },
+      { title: "กรดเกลือ", target: { H: 1, Cl: 1 } }, { title: "Ozone", target: { O: 3 } }
+    ];
+    const matchPairs = [
+      { l: "Acid", r: "pH < 7" }, { l: "Base", r: "pH > 7" },
+      { l: "Neutral", r: "pH = 7" }, { l: "Proton", r: "ประจุบวก" }
+    ];
+    const memoryPairs = [
+      { pair: 1, a: "H", b: "Hydrogen" }, { pair: 2, a: "O", b: "Oxygen" },
+      { pair: 3, a: "Na", b: "Sodium" }, { pair: 4, a: "Cl", b: "Chlorine" },
+    ];
+
+    const levels = [...baseLevels];
+
+    // Generate up to 100 levels
+    for (let i = 11; i <= 100; i++) {
+      if (i % 10 === 0) {
+        // Boss level
+        levels.push({
+          id: i, type: "boss", title: `BOSS ${i / 10}: Chemical Chaos`, desc: "บอสโหมด! ผสมสารหรือแก้โจทย์ให้ทันเวลา!", target: ["neutral", "acid", "base"][i % 3], timeLimit: Math.max(5, 20 - (i / 10) * 2)
+        });
+      } else {
+        // Random normal level
+        const t = types[Math.floor(Math.random() * types.length)];
+        let lvl = { id: i, type: t };
+
+        if (t === "atom") {
+          const el = elements[Math.floor(Math.random() * elements.length)];
+          lvl.title = `อะตอม: ${el.name}`; lvl.desc = `ตั้งค่า Proton = ${el.p}`; lvl.target = el.p;
+        } else if (t === "molecule") {
+          const mol = mols[Math.floor(Math.random() * mols.length)];
+          lvl.title = `โมเลกุล: ${mol.title}`; lvl.desc = `สร้างโมเลกุลนี้ให้สมบูรณ์`; lvl.target = mol.target;
+        } else if (t === "mix") {
+          const trg = ["neutral", "acid", "base"][Math.floor(Math.random() * 3)];
+          lvl.title = `ปริศนา pH`; lvl.desc = `ทำสารให้เป็น ${trg}`; lvl.target = trg;
+        } else if (t === "separate") {
+          lvl.title = `การแยกสาร`; lvl.desc = `แยกเกลือออกจากน้ำ`; lvl.answer = "evaporation";
+        } else if (t === "identify") {
+          const ans = ["acid", "base", "neutral"][Math.floor(Math.random() * 3)];
+          lvl.title = `วิเคราะห์สาร`; lvl.desc = `สารนี้มีฤทธิ์เป็น?`; lvl.answer = ans;
+        } else if (t === "periodic") {
+          const el = elements[Math.floor(Math.random() * elements.length)];
+          lvl.title = `ค้นหาธาตุ`; lvl.desc = `ธาตุ ${el.name} คือสัญลักษณ์ใด?`; lvl.answer = el.sym;
+        } else if (t === "match") {
+          lvl.title = `จับคู่คอนเซปต์`; lvl.desc = `จับคู่คำให้ถูกต้อง`;
+          lvl.pairs = [...matchPairs].sort(() => 0.5 - Math.random()).slice(0, 3); // pick 3 pairs
+        } else if (t === "memory") {
+          lvl.title = `เปิดการ์ดความจำ`; lvl.desc = `จับคู่สัญลักษณ์และชื่อธาตุ`;
+          const picked = [...memoryPairs].sort(() => 0.5 - Math.random()).slice(0, 4);
+          lvl.cards = [];
+          picked.forEach(p => { lvl.cards.push({ id: p.pair, t: p.a }); lvl.cards.push({ id: p.pair, t: p.b }); });
+          lvl.cards.sort(() => 0.5 - Math.random());
+        } else if (t === "reaction") {
+          lvl.title = `ปริศนาสมการ`; lvl.desc = `ต่อสมการให้สมดุลและถูกต้อง H + Cl ➔ ?`;
+          lvl.slots = ["H", "+", "Cl", "➔", "?"];
+          lvl.pool = ["HCl", "H2O", "Na", "CO2"];
+          lvl.answer = ["HCl"];
+        }
+        levels.push(lvl);
+      }
+    }
+
+    /* ================== UI BIND ================== */
+    const uiLevel = document.getElementById("uiLevel");
+    const uiXP = document.getElementById("uiXP");
+    const uiXPNext = document.getElementById("uiXPNext");
+    const uiStars = document.getElementById("uiStars");
+    const uiMaxCombo = document.getElementById("uiMaxCombo");
+    const xpBar = document.getElementById("xpBar");
+
+    const screenMenu = document.getElementById("screenMenu");
+    const screenGame = document.getElementById("screenGame");
+    const levelGrid = document.getElementById("levelGrid");
+
+    const gTitle = document.getElementById("gTitle");
+    const gDesc = document.getElementById("gDesc");
+    const gBody = document.getElementById("gBody");
+    const gCheck = document.getElementById("gCheck");
+    const gReset = document.getElementById("gReset");
+    const gBack = document.getElementById("gBack");
+    const gResult = document.getElementById("gResult");
+    const gStars = document.getElementById("gStars");
+    const gScore = document.getElementById("gScore");
+    const gTimeLeft = document.getElementById("gTimeLeft");
+    const gTimerBar = document.getElementById("gTimerBar");
+    const gCombo = document.getElementById("gCombo");
+
+    const aiTutor = document.getElementById("aiTutor");
+    const aiTutorMsg = document.getElementById("aiTutorMsg");
+
+    const winPopup = document.getElementById("winPopup");
+    const popupMsg = document.getElementById("popupMsg");
+    const btnNextLevel = document.getElementById("btnNextLevel");
+    const btnPopupMenu = document.getElementById("btnPopupMenu");
+    const btnAiExplain = document.getElementById("btnAiExplain");
+    const aiExplainBox = document.getElementById("aiExplainBox");
+
+    const modalBadges = document.getElementById("modalBadges");
+    const btnBadges = document.getElementById("btnBadges");
+    const btnCloseBadges = document.getElementById("btnCloseBadges");
+    const achievementsList = document.getElementById("achievementsList");
+    const missionsList = document.getElementById("missionsList");
+
+    const modalAiSummary = document.getElementById("modalAiSummary");
+    const btnAiSummary = document.getElementById("btnAiSummary");
+    const btnCloseAiSummary = document.getElementById("btnCloseAiSummary");
+
+    const btnAR = document.getElementById("btnAR");
+    const arVideo = document.getElementById("ar-video");
+    let arStream = null;
+
+    const btnVR = document.getElementById("btnVR");
+    const btnSandbox = document.getElementById("btnSandbox");
+    let isVR = false;
+
+    document.getElementById("btnMenu").onclick = () => showMenu();
+    document.getElementById("btnReset").onclick = () => { if (confirm("รีเซ็ตความคืบหน้าทั้งหมด?")) resetAll(); };
+    btnBadges.onclick = () => renderBadges();
+    btnCloseBadges.onclick = () => modalBadges.classList.add("hidden");
+
+    // AI SUMMARY
+    btnAiSummary.onclick = () => {
+      modalAiSummary.classList.remove("hidden");
+      let sumText = `คุณเล่นถึงด่าน <b>${state.levelsUnlocked}</b> และผ่านมาแล้ว ${state.stats.levelsPlayed} ด่านในเซสชั่นนี้<br><br>`;
+      if (state.levelsUnlocked > 10) sumText += "💡 <b>บทเรียนล่าสุด:</b> คุณเริ่มมีความเข้าใจคลาสสิกของกรด-เบส และโครงสร้างโมเลกุลที่ซับซ้อนขึ้น สามารถจัดการกับบอสและแรงกดดันทางเวลาได้เป็นอย่างดี<br>";
+      else if (state.levelsUnlocked > 3) sumText += "💡 <b>บทเรียนล่าสุด:</b> ตอนนี้คุณกำลังฝึกโครงสร้างพันธะอะตอมและโมเลกุลพื้นฐาน (อย่างเช่น H2O และ CO2)<br>";
+      else sumText += "💡 <b>บทเรียนล่าสุด:</b> คุณเพิ่งเริ่มทำความรู้จักกับจำนวนโปรตอนและโครงสร้างอะตอมเบื้องต้น สู้ๆ เคมีไม่ยากอย่างที่คิด!<br>";
+
+      sumText += `<br>🔥 คำแนะนำจาก AI: รักษา Combo (${state.combo}) ต่อไปเพื่อเก็บแต้มเพิ่มให้เร็วขึ้นนะ!`;
+      document.getElementById("aiSummaryBody").innerHTML = sumText;
+    };
+    btnCloseAiSummary.onclick = () => modalAiSummary.classList.add("hidden");
+
+    // AR MODE
+    btnAR.onclick = async () => {
+      if (document.body.classList.contains("ar-active")) {
+        document.body.classList.remove("ar-active");
+        if (arStream) arStream.getTracks().forEach(t => t.stop());
+        btnAR.innerHTML = "📸 AR Mode";
+      } else {
+        try {
+          arStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+          arVideo.srcObject = arStream;
+          document.body.classList.add("ar-active");
+          btnAR.innerHTML = "❌ ปิด AR Mode";
+        } catch (e) {
+          alert("ไม่สามารถเปิดกล้องเพื่อรัน AR/VR ได้");
+        }
+      }
+    };
+
+    // VR PANNING (Simulated)
+    btnVR.onclick = () => {
+      isVR = !isVR;
+      if (isVR) {
+        document.body.classList.add("vr-active");
+        btnVR.innerHTML = "❌ ปิด VR Mode";
+        if (document.body.requestFullscreen) document.body.requestFullscreen();
+      } else {
+        document.body.classList.remove("vr-active");
+        document.body.style.backgroundPosition = "center center";
+        btnVR.innerHTML = "🥽 VR View";
+        if (document.fullscreenElement) document.exitFullscreen();
+      }
+    };
+    document.addEventListener("mousemove", (e) => {
+      if (!isVR) return;
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      document.body.style.backgroundPosition = `${x}% ${y}%`;
+    });
+
+    // SANDBOX MODE
+    btnSandbox.onclick = () => {
+      startLevel({ id: 999, type: "sandbox", title: "โหมดทดลองอิสระ", desc: "ผสมสารอะไรก็ได้เพื่อดูปฏิกิริยา! ไม่มีถูกผิด" });
+    };
+
+    function updateTop() {
+      uiLevel.textContent = state.level;
+      uiXP.textContent = state.xp;
+      uiXPNext.textContent = xpNext();
+      uiStars.textContent = state.stars;
+      uiMaxCombo.textContent = state.maxCombo;
+      const pct = Math.min(100, (state.xp / xpNext()) * 100);
+      xpBar.style.width = pct + "%";
+    }
+
+    /* ================== MENU ================== */
+    function showMenu() {
+      screenGame.classList.add("hidden");
+      screenMenu.classList.remove("hidden");
+      renderGrid();
+      updateTop();
+    }
+    function renderGrid() {
+      levelGrid.innerHTML = "";
+      levels.forEach(l => {
+        const unlocked = l.id <= state.levelsUnlocked;
+        const stars = state.levelStars[l.id] || 0;
+        const isBoss = l.type === "boss";
+        const card = document.createElement("div");
+        card.className = "card " + (unlocked ? "" : "locked") + (isBoss ? " boss-card" : "");
+        card.innerHTML = `
+      <h3 class="${isBoss ? 'boss-text' : ''}">#${l.id} ${l.title}</h3>
+      <div class="small">${l.desc}</div>
+      <div class="row">
+        <div class="stars">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
+        <div class="spacer"></div>
+        <button class="${isBoss ? 'bad' : ''}" ${unlocked ? "" : "disabled"}>เล่น</button>
+      </div>
+    `;
+        card.querySelector("button").onclick = () => startLevel(l.id);
+        levelGrid.appendChild(card);
+      });
+    }
+
+    function renderBadges() {
+      modalBadges.classList.remove("hidden");
+
+      // Daily Missions mock
+      const dateStr = new Date().toDateString();
+      if (state.lastLoginDate !== dateStr) {
+        state.lastLoginDate = dateStr;
+        state.stats.levelsPlayed = 0; // reset daily stats
+        save();
+      }
+      const mDone = state.stats.levelsPlayed >= 5;
+      missionsList.innerHTML = `
+        <div class="ach-card">
+          <div class="ach-icon">🎯</div>
+          <div style="flex:1">
+            <strong>เล่นจบ 5 ด่านใน 1 วัน</strong><br>
+            <span class="small">ความคืบหน้า: ${Math.min(5, state.stats.levelsPlayed)}/5</span>
+          </div>
+          ${mDone ? '<div class="badge good">สำเร็จแล้ว</div>' : '<div class="badge">ยังไม่สำเร็จ</div>'}
+        </div>
+      `;
+
+      // Achievements
+      achievementsList.innerHTML = "";
+      A_DATA.forEach(a => {
+        const has = state.achievements.includes(a.id);
+        achievementsList.innerHTML += `
+          <div class="ach-card ${has ? '' : 'locked'}">
+            <div class="ach-icon">${a.icon}</div>
+            <div>
+              <strong>${a.title}</strong><br>
+              <span class="small">${a.desc}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    /* ================== GAME CORE ================== */
+    let current = null;
+    let score = 0;
+    let local = {}; // per-level temp
+    let timerInt = null;
+    let timeSpent = 0;
+    let maxTimeForLevel = 30; // 30s for normal
+    let hasFailedThisLevel = false;
+
+    // AI Check Helper Call inside inputs
+    function runAiTutorHint() {
+      if (!current) return;
+      let hint = "";
+      if (current.type === "mix" || current.type === "boss") {
+        const diff = local.acid - local.base;
+        if (current.target === "neutral") {
+          if (diff > 2) hint = "วิเคราะห์: ตอนนี้สารมีฤทธิ์เป็นกรดมากไป แนะนำให้เติมเบส (NaOH) ลดความแกร่งลงนะ";
+          else if (diff < -2) hint = "วิเคราะห์: สารมีความเป็นด่าง/เบสสูง แนะนำให้เพิ่มกรด (HCl) เจือจาง";
+        }
+      } else if (current.type === "atom") {
+        if (local.proton > current.target + 2) hint = "วิเคราะห์: โปรตอนเยอะไปแล้ว! ธาตุจะกลายเป็นตัวอื่นนะจ๊ะ";
+      }
+
+      if (hint) {
+        aiTutor.classList.remove("hidden");
+        aiTutorMsg.textContent = hint;
+      } else {
+        aiTutor.classList.add("hidden");
+      }
+    }
+
+    function startLevel(idOrObj) {
+      let l;
+      if (typeof idOrObj === "object") {
+        l = idOrObj;
+      } else {
+        l = levels.find(x => x.id === idOrObj);
+        // Fallback for Sandbox 999 if passed as ID (e.g. from gReset)
+        if (!l && idOrObj === 999) {
+          l = { id: 999, type: "sandbox", title: "โหมดทดลองอิสระ", desc: "ผสมสารอะไรก็ได้เพื่อดูปฏิกิริยา! ไม่มีถูกผิด" };
+        }
+      }
+      current = l;
+      score = 0;
+      timeSpent = 0;
+      hasFailedThisLevel = false;
+      local = { wrongCount: 0 };
+
+      maxTimeForLevel = l.type === "boss" ? l.timeLimit : 30; // base 30s
+
+      gTitle.innerHTML = l.type === "boss" ? `<span class="bad">💀 ${l.title}</span>` : `ด่าน ${l.id}: ${l.title}`;
+      gDesc.textContent = l.desc;
+      gResult.textContent = "";
+      gStars.textContent = state.levelStars[l.id] || 0;
+      gScore.textContent = score;
+      if (l.type === "sandbox") {
+        gTimeLeft.textContent = "∞";
+        gTimerBar.style.width = "100%";
+        gTimerBar.style.background = "var(--accent)";
+      } else {
+        gTimeLeft.textContent = maxTimeForLevel;
+        gTimerBar.style.width = "100%";
+        gTimerBar.style.background = "linear-gradient(90deg, var(--warn), var(--bad))";
+      }
+      gCombo.textContent = state.combo;
+      aiTutor.classList.add("hidden");
+      aiExplainBox.classList.add("hidden");
+      aiExplainBox.textContent = "";
+
+      if (timerInt) clearInterval(timerInt);
+      timerInt = setInterval(() => {
+        timeSpent++;
+        let remain = maxTimeForLevel - timeSpent;
+
+        if (remain <= 0) {
+          remain = 0;
+          clearInterval(timerInt);
+          gResult.innerHTML = `<span class="bad">💀 หมดเวลา! ${l.type === "boss" ? "บอสโจมตี!" : "คุณทำตัวอย่างหลุดมือ!"}</span>`;
+          state.combo = 0;
+          gCombo.textContent = 0;
+          gCheck.disabled = true;
+          playSound('wrong');
+          save(); updateTop();
+        }
+
+        gTimeLeft.textContent = remain;
+        const pct = Math.max(0, (remain / maxTimeForLevel) * 100);
+        gTimerBar.style.width = pct + "%";
+        if (pct < 25) gTimerBar.style.background = "var(--bad)";
+      }, 1000);
+      if (l.type === "sandbox") clearInterval(timerInt);
+
+      renderGame(l);
+      gCheck.disabled = false;
+      gCheck.style.display = (l.type === "sandbox" || l.type === "match" || l.type === "memory") ? "none" : "";
+      screenMenu.classList.add("hidden");
+      screenGame.classList.remove("hidden");
+    }
+
+    function renderGame(l) {
+      gBody.innerHTML = "";
+      if (l.type === "atom") {
+        local.proton = 0;
+        const wrap = document.createElement("div");
+        wrap.innerHTML = `
+      <div class="row">
+        <div class="panel">
+          <div class="big center">Proton: <span id="pCount">0</span></div>
+          <div class="center small">เป้าหมาย: ${l.target}</div>
+          <div class="hr"></div>
+          <div class="row center">
+            <button id="addP">+ Proton</button>
+            <button class="secondary" id="subP">- Proton</button>
+          </div>
+        </div>
+      </div>`;
+        gBody.appendChild(wrap);
+        const pCount = wrap.querySelector("#pCount");
+        wrap.querySelector("#addP").onclick = () => { local.proton++; pCount.textContent = local.proton; runAiTutorHint(); };
+        wrap.querySelector("#subP").onclick = () => { local.proton = Math.max(0, local.proton - 1); pCount.textContent = local.proton; runAiTutorHint(); };
+      }
+
+      if (l.type === "molecule") {
+        local.atoms = [];
+        const atoms = ["H", "O", "C", "N"];
+        const target = Object.entries(l.target).map(([k, v]) => `${k}${v > 1 ? v : ""}`).join("");
+        const wrap = document.createElement("div");
+        wrap.innerHTML = `
+      <div class="small">เป้าหมาย: <span class="pill">${target}</span></div>
+      <div class="hr"></div>
+      <div class="list" id="atomList"></div>
+      <div class="hr"></div>
+      <div class="row"><div class="slot" id="slot">วางอะตอมที่เลือก</div></div>
+    `;
+        gBody.appendChild(wrap);
+        const list = wrap.querySelector("#atomList");
+        const slot = wrap.querySelector("#slot");
+        atoms.forEach(a => {
+          const t = document.createElement("div");
+          t.className = "tile"; t.textContent = a;
+          t.onclick = () => { local.atoms.push(a); slot.textContent = local.atoms.join("-"); };
+          list.appendChild(t);
+        });
+      }
+
+      if (l.type === "mix") {
+        local.acid = 0; local.base = 0;
+        const wrap = document.createElement("div");
+        wrap.innerHTML = `
+      <div class="row">
+        <div class="panel" style="flex:1">
+          <div class="row">
+            <div style="flex:1">
+              <div class="big">Acid (HCl): <span id="aC">0</span></div>
+              <div class="big">Base (NaOH): <span id="bC">0</span></div>
+              <div class="hr"></div>
+              <div class="row">
+                <button id="addA">+ Acid</button>
+                <button id="addB">+ Base</button>
+              </div>
+            </div>
+            <div style="width:100px; text-align:center;">
+              <div class="beaker"><div id="bLiquid" class="liquid" style="background:hsl(120, 80%, 50%); height: 10%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+        gBody.appendChild(wrap);
+        const aC = wrap.querySelector("#aC"), bC = wrap.querySelector("#bC");
+        const liq = wrap.querySelector("#bLiquid"), beaker = wrap.querySelector(".beaker");
+
+        function updateLiquid() {
+          const total = local.acid + local.base;
+          liq.style.height = Math.min(100, 10 + total * 10) + "%";
+          const diff = local.base - local.acid;
+          let hue = 120 + (diff * 30);
+          hue = Math.max(0, Math.min(240, hue));
+          liq.style.background = `hsl(${hue}, 80%, 50%)`;
+
+          if (total > 0) {
+            const b = document.createElement("div");
+            b.className = "reaction-bubble";
+            b.style.width = b.style.height = (Math.random() * 8 + 4) + "px";
+            b.style.left = (Math.random() * 80 + 10) + "%";
+            b.style.bottom = "10px";
+            beaker.appendChild(b);
+            setTimeout(() => b.remove(), 1500);
+          }
+        }
+
+        wrap.querySelector("#addA").onclick = () => { local.acid++; aC.textContent = local.acid; updateLiquid(); runAiTutorHint(); }
+        wrap.querySelector("#addB").onclick = () => { local.base++; bC.textContent = local.base; updateLiquid(); runAiTutorHint(); }
+      }
+
+      if (l.type === "separate") {
+        const opts = [
+          { k: "filtration", t: "Filtration (กรอง)" },
+          { k: "evaporation", t: "Evaporation (ระเหย)" },
+          { k: "distillation", t: "Distillation (กลั่น)" },
+        ];
+        local.choice = null;
+        const wrap = document.createElement("div");
+        const list = document.createElement("div"); list.className = "list";
+        opts.forEach(o => {
+          const t = document.createElement("div"); t.className = "tile"; t.textContent = o.t;
+          t.onclick = () => { local.choice = o.k;[...list.children].forEach(c => c.style.outline = ""); t.style.outline = "2px solid #38bdf8"; };
+          list.appendChild(t);
+        });
+        wrap.appendChild(list);
+        gBody.appendChild(wrap);
+      }
+
+      if (l.type === "identify") {
+        const opts = [
+          { k: "acid", t: "Acid (กรด)" },
+          { k: "base", t: "Base (เบส)" },
+          { k: "neutral", t: "Neutral (กลาง)" },
+        ];
+        local.choice = null;
+        const wrap = document.createElement("div");
+        const list = document.createElement("div"); list.className = "list";
+        opts.forEach(o => {
+          const t = document.createElement("div"); t.className = "tile"; t.textContent = o.t;
+          t.onclick = () => { local.choice = o.k;[...list.children].forEach(c => c.style.outline = ""); t.style.outline = "2px solid #38bdf8"; };
+          list.appendChild(t);
+        });
+        wrap.appendChild(list);
+        gBody.appendChild(wrap);
+      }
+
+      if (l.type === "periodic") {
+        const elems = ["H", "He", "C", "N", "O", "Na", "Cl"];
+        local.choice = null;
+        const wrap = document.createElement("div");
+        const list = document.createElement("div"); list.className = "list";
+        elems.forEach(e => {
+          const t = document.createElement("div"); t.className = "tile"; t.textContent = e;
+          t.onclick = () => { local.choice = e;[...list.children].forEach(c => c.style.outline = ""); t.style.outline = "2px solid #38bdf8"; };
+          list.appendChild(t);
+        });
+        wrap.appendChild(list);
+        gBody.appendChild(wrap);
+      }
+
+      if (l.type === "match") {
+        local.matches = 0;
+        local.selectedL = null;
+        local.selectedR = null;
+        const wrap = document.createElement("div");
+        wrap.className = "match-container";
+        const cL = document.createElement("div"); cL.className = "match-col";
+        const cR = document.createElement("div"); cR.className = "match-col";
+
+        const leftArr = [...l.pairs].sort(() => 0.5 - Math.random());
+        const rightArr = [...l.pairs].sort(() => 0.5 - Math.random());
+
+        function checkMatch() {
+          if (!local.selectedL || !local.selectedR) return;
+          if (local.selectedL.dataset.r === local.selectedR.textContent) {
+            playSound("success");
+            local.selectedL.classList.add("matched"); local.selectedR.classList.add("matched");
+            local.matches++;
+            if (local.matches === l.pairs.length) runAiTutorHint(); // to clear
+          } else {
+            playSound("wrong");
+            local.selectedL.classList.remove("selected"); local.selectedR.classList.remove("selected");
+          }
+          local.selectedL = null; local.selectedR = null;
+        }
+
+        leftArr.forEach(p => {
+          const div = document.createElement("div"); div.className = "match-item"; div.textContent = p.l; div.dataset.r = p.r;
+          div.onclick = () => {
+            if (div.classList.contains("matched")) return;
+            [...cL.children].forEach(c => c.classList.remove("selected"));
+            div.classList.add("selected"); local.selectedL = div; playSound("click"); checkMatch();
+          };
+          cL.appendChild(div);
+        });
+        rightArr.forEach(p => {
+          const div = document.createElement("div"); div.className = "match-item"; div.textContent = p.r;
+          div.onclick = () => {
+            if (div.classList.contains("matched")) return;
+            [...cR.children].forEach(c => c.classList.remove("selected"));
+            div.classList.add("selected"); local.selectedR = div; playSound("click"); checkMatch();
+          };
+          cR.appendChild(div);
+        });
+        wrap.appendChild(cL); wrap.appendChild(cR);
+        gBody.appendChild(wrap);
+        // auto check when this type completes
+        gCheck.style.display = "none";
+        local.checkAuto = () => { return local.matches === l.pairs.length; };
+      }
+
+      if (l.type === "memory") {
+        gCheck.style.display = "none";
+        local.matches = 0;
+        local.flipped = [];
+        const grid = document.createElement("div"); grid.className = "memory-grid";
+
+        l.cards.forEach((c, idx) => {
+          const card = document.createElement("div"); card.className = "memory-card"; card.dataset.id = c.id;
+          card.innerHTML = `<div class="memory-inner"><div class="memory-front"></div><div class="memory-back">${c.t}</div></div>`;
+          card.onclick = () => {
+            if (card.classList.contains("flipped") || card.classList.contains("matched") || local.flipped.length >= 2) return;
+            card.classList.add("flipped");
+            playSound("click");
+            local.flipped.push(card);
+
+            if (local.flipped.length === 2) {
+              const [c1, c2] = local.flipped;
+              if (c1.dataset.id === c2.dataset.id) {
+                setTimeout(() => {
+                  playSound("success");
+                  c1.classList.add("matched"); c2.classList.add("matched");
+                  local.matches++;
+                  local.flipped = [];
+                  if (local.matches === l.cards.length / 2) gCheck.onclick();
+                }, 400);
+              } else {
+                setTimeout(() => {
+                  playSound("wrong");
+                  c1.classList.remove("flipped"); c2.classList.remove("flipped");
+                  local.flipped = [];
+                }, 800);
+              }
+            }
+          };
+          grid.appendChild(card);
+        });
+        gBody.appendChild(grid);
+      }
+
+      // Boss uses mix rules for now
+      if (l.type === "boss") {
+        local.acid = 0; local.base = 0;
+        const wrap = document.createElement("div");
+        wrap.innerHTML = `
+      <div class="row">
+        <div class="panel" style="flex:1; border-color:var(--bad);">
+          <div class="row">
+            <div style="flex:1">
+              <div class="big bad">⚠️ ทะลุขีดจำกัดสาร!</div>
+              <div class="big">Acid (HCl): <span id="aC">0</span></div>
+              <div class="big">Base (NaOH): <span id="bC">0</span></div>
+              <div class="hr"></div>
+              <div class="row">
+                <button class="warn" id="addA">+ Acid</button>
+                <button class="warn" id="addB">+ Base</button>
+              </div>
+            </div>
+            <div style="width:100px; text-align:center;">
+              <div class="beaker"><div id="bLiquid" class="liquid" style="background:hsl(120, 80%, 50%); height: 10%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+        gBody.appendChild(wrap);
+        const aC = wrap.querySelector("#aC"), bC = wrap.querySelector("#bC");
+        const liq = wrap.querySelector("#bLiquid");
+
+        function updateLiquid() {
+          const total = local.acid + local.base;
+          liq.style.height = Math.min(100, 10 + total * 10) + "%";
+          const diff = local.base - local.acid;
+          let hue = 120 + (diff * 30);
+          liq.style.background = `hsl(${Math.max(0, Math.min(240, hue))}, 80%, 50%)`;
+        }
+
+        wrap.querySelector("#addA").onclick = () => { local.acid++; aC.textContent = local.acid; updateLiquid(); runAiTutorHint(); }
+        wrap.querySelector("#addB").onclick = () => { local.base++; bC.textContent = local.base; updateLiquid(); runAiTutorHint(); }
+      }
+
+      if (l.type === "reaction") {
+        gCheck.style.display = "";
+        local.answers = [];
+        const wrap = document.createElement("div");
+        const zone = document.createElement("div"); zone.className = "slot-zone";
+        const inv = document.createElement("div"); inv.className = "inventory";
+
+        // Parse slots. "?" means a blank slot to fill.
+        let qCount = 0;
+        l.slots.forEach(s => {
+          if (s === "?") {
+            const idx = qCount++;
+            const slot = document.createElement("div"); slot.className = "slot";
+            slot.dataset.idx = idx;
+            slot.onclick = () => {
+              if (local.answers[idx]) {
+                playSound("click");
+                local.answers[idx] = null;
+                slot.textContent = "";
+                slot.classList.remove("filled");
+              }
+            };
+            zone.appendChild(slot);
+          } else {
+            const text = document.createElement("div"); text.className = "slot-symbol"; text.textContent = s;
+            zone.appendChild(text);
+          }
+        });
+
+        // Parse Tool Pool
+        l.pool.forEach(p => {
+          const item = document.createElement("div"); item.className = "inv-item"; item.textContent = p;
+          item.onclick = () => {
+            // find first empty slot
+            playSound("click");
+            const emptyIdx = local.answers.findIndex(a => !a);
+            let targetIdx = emptyIdx === -1 ? (local.answers.length < qCount ? local.answers.length : -1) : emptyIdx;
+            if (targetIdx !== -1) {
+              local.answers[targetIdx] = p;
+              const slotNodes = zone.querySelectorAll(".slot");
+              slotNodes[targetIdx].textContent = p;
+              slotNodes[targetIdx].classList.add("filled");
+            }
+          };
+          inv.appendChild(item);
+        });
+
+        wrap.appendChild(zone); wrap.appendChild(inv);
+        gBody.appendChild(wrap);
+      }
+
+      if (l.type === "sandbox") {
+        gCheck.style.display = "none";
+        document.getElementById("btnAR").style.display = "none";
+        const wrap = document.createElement("div");
+        wrap.innerHTML = `
+          <div style="text-align:center; margin-bottom: 20px;">
+            <div class="beaker" style="width: 150px; height: 180px; margin: 0 auto;">
+              <div id="sbLiquid" class="liquid" style="height: 10%; background: hsl(200,80%,50%); transition: all 1s;"></div>
+              <div id="sbFlash" style="position:absolute; top:0; left:0; width:100%; height:100%; background:white; opacity:0; pointer-events:none; transition: opacity 0.5s;"></div>
+            </div>
+            <div id="sbLog" style="margin-top:10px; min-height: 24px; color: var(--accent2);">ผสมสารทดลองเพื่อดูปฏิกิริยา!</div>
+          </div>
+          <div class="inventory">
+            <div class="inv-item" id="addH2O">💧 Water</div>
+            <div class="inv-item" id="addHCl" style="color:var(--bad)">🧪 HCl (Acid)</div>
+            <div class="inv-item" id="addNaOH" style="color:var(--good)">🧪 NaOH (Base)</div>
+            <div class="inv-item" id="addNa" style="color:orange">💥 Sodium</div>
+            <div class="inv-item" id="addIndicate" style="color:pink">💖 Indicator</div>
+          </div>
+        `;
+        gBody.appendChild(wrap);
+
+        let sState = { liq: 10, h: 200, s: 80, l: 50, hasInd: false };
+        const liq = wrap.querySelector("#sbLiquid");
+        const log = wrap.querySelector("#sbLog");
+        const flash = wrap.querySelector("#sbFlash");
+
+        function sync() {
+          sState.liq = Math.min(100, sState.liq);
+          liq.style.height = sState.liq + "%";
+          liq.style.background = `hsl(${sState.h}, ${sState.s}%, ${sState.l}%)`;
+        }
+
+        wrap.querySelector("#addH2O").onclick = () => { playSound("click"); sState.liq += 10; sState.h = 200; log.textContent = "เพิ่มน้ำ: สารละลายเจือจางลง"; sync(); };
+        wrap.querySelector("#addHCl").onclick = () => { playSound("click"); sState.liq += 10; if (sState.hasInd) sState.h = 0; else sState.h = Math.max(0, sState.h - 30); log.textContent = "เพิ่มกรด: ลดค่า pH"; sync(); };
+        wrap.querySelector("#addNaOH").onclick = () => { playSound("click"); sState.liq += 10; if (sState.hasInd) sState.h = 280; else sState.h = Math.min(240, sState.h + 30); log.textContent = "เพิ่มเบส: เพิ่มค่า pH"; sync(); };
+        wrap.querySelector("#addIndicate").onclick = () => { playSound("click"); sState.hasInd = true; log.textContent = "ใส่ Universal Indicator: สีสารละลายจะแสดงค่า pH ชัดเจน"; sync(); };
+        wrap.querySelector("#addNa").onclick = () => {
+          playSound("wrong");
+          log.textContent = "ใส่ โซเดียมบริสุทธิ์: ปฏิกิริยารุนแรงกับน้ำ เกิดแก๊สระเบิด!";
+          flash.style.opacity = "1";
+          setTimeout(() => flash.style.opacity = "0", 300);
+          spawnVictoryBubbles();
+          // Reset partially
+          setTimeout(() => { sState.liq = 10; sState.h = 0; sState.l = 20; sync(); log.textContent = "โพล๊ะ! น้ำลดลง"; }, 1000);
+        };
+      }
+
+      // Check auto completion override for games that hide the check button
+      if (l.type === "match") {
+        let autoCheck = setInterval(() => {
+          if (local.checkAuto && local.checkAuto()) { clearInterval(autoCheck); gCheck.style.display = ""; gCheck.onclick(); }
+          if (!document.contains(gBody)) clearInterval(autoCheck);
+        }, 500);
+      }
+    }
+
+    /* ================== CHECK ================== */
+    gCheck.onclick = () => {
+      if (!current) return;
+      let correct = false;
+
+      if (current.type === "atom") {
+        correct = (local.proton === current.target);
+      }
+
+      if (current.type === "molecule") {
+        const need = current.target;
+        const count = {};
+        local.atoms.forEach(a => count[a] = (count[a] || 0) + 1);
+        correct = Object.keys(need).every(k => count[k] === need[k]) &&
+          Object.keys(count).every(k => need[k] === count[k]);
+      }
+
+      if (current.type === "mix" || current.type === "boss") {
+        const { acid, base } = local;
+        if (current.target === "neutral") correct = acid > 0 && acid === base;
+        if (current.target === "acid") correct = acid > base && acid - base <= 2;
+        if (current.target === "base") correct = base > acid && base - acid <= 2;
+      }
+
+      if (current.type === "separate") {
+        correct = (local.choice === current.answer);
+      }
+
+      if (current.type === "identify") {
+        correct = (local.choice === current.answer);
+      }
+
+      if (current.type === "periodic") {
+        correct = (local.choice === current.answer);
+      }
+
+      if (current.type === "match") {
+        correct = (local.matches === current.pairs.length);
+      }
+
+      if (current.type === "memory") {
+        correct = (local.matches === current.cards.length / 2);
+      }
+
+      if (current.type === "reaction") {
+        // order doesn't matter for commutative addition on sides, but simple array compare for now
+        correct = JSON.stringify(local.answers) === JSON.stringify(current.answer);
+      }
+
+      if (correct) {
+        clearInterval(timerInt);
+        playSound('success');
+        spawnVictoryBubbles();
+        state.combo++;
+        state.maxCombo = Math.max(state.maxCombo, state.combo);
+
+        let remain = maxTimeForLevel - timeSpent;
+        let timeBonus = Math.max(0, remain) * 2;
+        let comboBonus = state.combo * 5;
+        score = 100 + timeBonus + comboBonus;
+        if (hasFailedThisLevel) score = 50; // penalty for brute forcing
+
+        gScore.textContent = score;
+        gCombo.textContent = state.combo;
+        gResult.innerHTML = `<span class="good">✔ ถูกต้อง! (Combo x${state.combo} & Time Bonus +${timeBonus})</span>`;
+
+        state.stats.levelsPlayed++;
+        checkAchievements(current.id, timeSpent, true);
+
+        // Pre-generate AI Explanation
+        btnAiExplain.style.display = "block";
+        aiExplainBox.classList.add("hidden");
+        let expl = `<b>AI อธิบาย:</b> `;
+        if (current.type === "atom") expl += `เลขอะตอมหรือรหัสโปรตอนคือตัวกำหนดว่ามันคือธาตุอะไร อย่างเป้าหมายของด่านนี้ใช้ Proton=${current.target} ซึ่งเป็นคุณสมบัติเฉพาะตัวของมันเองครับ`;
+        else if (current.type === "mix" || current.type === "boss") expl += `การเทียบสัดส่วนระหว่าง กรด(H+) และ เบส(OH-) เป็นตัวชี้วัด pH กรณีนี้เราผสมเข้ากันเพื่อตอบโจทย์สถานะ ${current.target} ครับ`;
+        else if (current.type === "separate") expl += `การแยกสารคือกระบวนการทำกายภาพเพื่อดึงธาตุ/โมเลกุลออกจากสารเนื้อผสม อย่างการทำให้ระเหยหรือกรอง`;
+        else expl += `ปฏิกิริยาเคมีและโครงสร้างโมเลกุลที่คุณทำ เกิดจากการสร้างพันธะที่ลงตัวครับ (Stable Isotope)`;
+        aiExplainBox.innerHTML = expl;
+
+        completeLevel();
+      } else {
+        playSound('wrong');
+        hasFailedThisLevel = true;
+        state.combo = 0;
+        gCombo.textContent = state.combo;
+        save(); updateTop();
+        gResult.innerHTML = `<span class="bad">✖ ยังไม่ถูก ลองใหม่ (Combo รีเซ็ต!)</span>`;
+
+        // Tutor help on wrong
+        aiTutor.classList.remove("hidden");
+        aiTutorMsg.innerHTML = "วิเคราะห์: ลองเช็คโจทย์ดูดีๆ หรือคิดถึงเรื่องโครงสร้างอิเล็กตรอนและ pH นะ!";
+
+        local.wrongCount++;
+        checkAchievements(current.id, timeSpent, false);
+      }
+    };
+
+    gReset.onclick = () => { if (current) startLevel(current.id); };
+    gBack.onclick = () => showMenu();
+
+    function spawnVictoryBubbles() {
+      for (let i = 0; i < 30; i++) {
+        const b = document.createElement("div");
+        b.className = "victory-bubble";
+        const size = Math.random() * 20 + 10;
+        b.style.width = size + "px";
+        b.style.height = size + "px";
+        b.style.left = Math.random() * 100 + "vw";
+        b.style.setProperty('--dur', (Math.random() * 2 + 2) + "s");
+        document.body.appendChild(b);
+        setTimeout(() => b.remove(), 4000);
+      }
+    }
+
+    /* ================== COMPLETE ================== */
+    function completeLevel() {
+      // stars: simple rule
+      let stars = 3;
+      // update stars
+      const prev = state.levelStars[current.id] || 0;
+      if (stars > prev) {
+        state.stars += (stars - prev);
+        state.levelStars[current.id] = stars;
+      }
+
+      // xp
+      const gainedXP = 30 + Math.floor(score / 10);
+      state.xp += gainedXP;
+      let levelUp = false;
+      while (state.xp >= xpNext()) {
+        state.xp -= xpNext();
+        state.level++;
+        levelUp = true;
+      }
+
+      // unlock next
+      state.levelsUnlocked = Math.max(state.levelsUnlocked, current.id + 1);
+
+      save();
+      updateTop();
+      gStars.textContent = state.levelStars[current.id];
+      gResult.innerHTML += ` <span class="good">ได้ ${stars}★ +${gainedXP} XP</span>`;
+
+      // Show popup
+      setTimeout(() => {
+        let msg = `คุณผ่านด่าน <b>${current.title}</b><br>ได้ ${stars} ดาว ★ และ +${gainedXP} XP`;
+        if (levelUp) {
+          playSound('levelup');
+          msg += `<br><span class="good" style="font-weight:bold; display:block; margin-top:8px;">🎯 เลเวลอัปเป็นเลเวล ${state.level}!</span>`;
+        }
+        popupMsg.innerHTML = msg;
+
+        if (current.id < levels.length) {
+          btnNextLevel.style.display = "";
+          // AI recommend next level smartly
+          if (timeSpent > 20) btnNextLevel.innerHTML = `🌟 AI แนะนำ: ฝึกด่าน ${current.id + 1} ต่อ ➔`;
+          else btnNextLevel.innerHTML = `⚡ ด่านถัดไป ➔`;
+        } else {
+          btnNextLevel.style.display = "none";
+        }
+        winPopup.classList.remove("hidden");
+      }, 500);
+    }
+
+    btnAiExplain.onclick = () => {
+      aiExplainBox.classList.remove("hidden");
+      btnAiExplain.style.display = "none";
+    };
+
+    btnNextLevel.onclick = () => {
+      winPopup.classList.add("hidden");
+      if (current && current.id < levels.length) {
+        startLevel(current.id + 1);
+      }
+    };
+
+    btnPopupMenu.onclick = () => {
+      winPopup.classList.add("hidden");
+      showMenu();
+    };
+
+    /* ================== INIT ================== */
+    load();
+    updateTop();
+    showMenu();
+  </script>
+</body>
+
+</html>
